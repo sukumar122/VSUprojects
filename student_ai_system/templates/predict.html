@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .predict-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #2c5282;
+        box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+    }
+    
+    .result-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .result-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+    
+    .result-value {
+        font-size: 48px;
+        font-weight: bold;
+    }
+    
+    .risk-high { color: #dc2626; }
+    .risk-medium { color: #d97706; }
+    .risk-low { color: #16a34a; }
+    
+    .btn-predict {
+        background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-predict:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(197, 48, 48, 0.3);
+        color: white;
+    }
+    
+    .progress-bar-custom {
+        height: 30px;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-brain me-2"></i>AI Prediction
+            </h2>
+            <p class="text-muted">Enter student metrics to get AI-powered predictions.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="predict-card p-4">
+                <h4 class="mb-4"><i class="fas fa-sliders-h me-2"></i>Input Parameters</h4>
+                
+                <form method="POST" action="{{ url_for('predict') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Student ID (Optional)</label>
+                        <input type="text" class="form-control" name="student_id" placeholder="Link prediction to existing student">
+                        <small class="text-muted">Enter a student ID to save this prediction to their history</small>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" value="20" min="15" max="30">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Attendance (%)</label>
+                            <input type="number" class="form-control" name="attendance" value="70" min="0" max="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Study Hours per Week</label>
+                            <input type="number" class="form-control" name="study_hours" value="5" min="0" max="80">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Previous GPA</label>
+                            <input type="number" class="form-control" name="previous_gpa" value="2.5" min="0" max="4" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Assignments Completed (%)</label>
+                            <input type="number" class="form-control" name="assignments_completed" value="60" min="0" max="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Parent Income ($)</label>
+                            <input type="number" class="form-control" name="parent_income" value="30000" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Health Issues (0-10)</label>
+                            <input type="number" class="form-control" name="health_issues" value="3" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = more health problems</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sleep Hours (daily)</label>
+                            <input type="number" class="form-control" name="sleep_hours" value="6" min="0" max="12" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Extracurriculars (hrs/wk)</label>
+                            <input type="number" class="form-control" name="extracurriculars" value="4" min="0" max="20" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mental Health Score (0-10)</label>
+                            <input type="number" class="form-control" name="mental_health_score" value="7" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = better mental health</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-predict">
+                            <i class="fas fa-brain me-2"></i>Get Prediction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            {% if prediction %}
+            <div class="result-card mb-4">
+                <div class="result-icon">
+                    {% if prediction.risk_level == 'High' %}
+                        <i class="fas fa-exclamation-triangle text-danger"></i>
+                    {% elif prediction.risk_level == 'Medium' %}
+                        <i class="fas fa-exclamation-circle text-warning"></i>
+                    {% else %}
+                        <i class="fas fa-check-circle text-success"></i>
+                    {% endif %}
+                </div>
+                
+                <h4 class="mb-3">Prediction Results</h4>
+                
+                <div class="row g-4 mt-2">
+                    <div class="col-6">
+                        <div class="result-value text-primary">{{ prediction.predicted_gpa }}</div>
+                        <div class="text-muted">Predicted GPA</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="result-value risk-{{ prediction.risk_level|lower }}">{{ (prediction.dropout_probability * 100)|round(1) }}%</div>
+                        <div class="text-muted">Dropout Probability</div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <span class="badge bg-{{ 'danger' if prediction.risk_level == 'High' else 'warning' if prediction.risk_level == 'Medium' else 'success' }} fs-5">
+                        {{ prediction.risk_level }} Risk
+                    </span>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="form-label">Risk Level Indicator</label>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-custom bg-{{ 'danger' if prediction.risk_level == 'High' else 'warning' if prediction.risk_level == 'Medium' else 'success' }}" 
+                             role="progressbar" 
+                             style="width: {{ prediction.dropout_probability * 100 }}%">
+                            {{ (prediction.dropout_probability * 100)|round(1) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="predict-card p-4">
+                <h5 class="mb-3"><i class="fas fa-lightbulb me-2"></i>Recommendations</h5>
+                {% if prediction.risk_level == 'High' %}
+                    <div class="alert alert-danger">
+                        <strong>High Risk:</strong> Immediate intervention recommended. Consider:
+                        <ul class="mb-0 mt-2">
+                            <li>Academic counseling sessions</li>
+                            <li>Tutoring services</li>
+                            <li>Regular check-ins</li>
+                            <li>Study group assignments</li>
+                        </ul>
+                    </div>
+                {% elif prediction.risk_level == 'Medium' %}
+                    <div class="alert alert-warning">
+                        <strong>Medium Risk:</strong> Monitor closely. Consider:
+                        <ul class="mb-0 mt-2">
+                            <li>Weekly progress checks</li>
+                            <li>Study resources access</li>
+                            <li>Peer mentoring</li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success">
+                        <strong>Low Risk:</strong> Student is performing well. Continue:
+                        <ul class="mb-0 mt-2">
+                            <li>Current study habits</li>
+                            <li>Regular engagement</li>
+                            <li>Encouragement and support</li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="result-card">
+                <div class="result-icon text-muted">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="text-muted">Enter Parameters</h4>
+                <p class="text-muted">Fill in the form and click "Get Prediction" to see AI-powered analysis.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Add All Students - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-control, .form-select, .form-file {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-file:focus {
+        border-color: #2c5282;
+        box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+    }
+    
+    .section-title {
+        color: #2c5282;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(22, 163, 74, 0.3);
+        color: white;
+    }
+
+    .csv-info {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-users me-2"></i>Bulk Add Students
+            </h2>
+            <p class="text-muted">Upload CSV file to add multiple students at once. Generated names/IDs, AI predictions.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="form-card p-4">
+                <form method="POST" action="{{ url_for('add_all') }}" enctype="multipart/form-data">
+                    <h5 class="section-title"><i class="fas fa-file-csv me-2"></i>CSV Upload</h5>
+                    <div class="mb-4">
+                        <label class="form-label">CSV File *</label>
+                        <input type="file" class="form-control form-file" name="csv_file" accept=".csv" required>
+                        <small class="text-muted">Columns: age,attendance,study_hours,previous_gpa,... (matches data/student_data.csv)</small>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-upload me-2"></i>Add All Students from CSV
+                        </button>
+                        <a href="{{ url_for('students') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-card p-4 csv-info">
+                <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Format</h5>
+                <p class="text-muted mb-1">Required columns:</p>
+                <ul class="text-muted mb-0">
+                    <li>age (int)</li>
+                    <li>attendance (%)</li>
+                    <li>study_hours (hrs)</li>
+                    <li>previous_gpa</li>
+                    <li>assignments_completed (%)</li>
+                    <li>parent_income ($)</li>
+                    <li>health_issues (0-10)</li>
+                    <li>sleep_hours</li>
+                    <li>extracurriculars (hrs)</li>
+                    <li>mental_health_score (0-10)</li>
+                </ul>
+                <hr class="my-3">
+                <a href="{{ url_for('export_csv') }}" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-download me-1"></i>Download Sample CSV
+                </a>
+                <div class="alert alert-info mt-3 small">
+                    Generated: Student names (Student_001), unique IDs, AI predictions.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

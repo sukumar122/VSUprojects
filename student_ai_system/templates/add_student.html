@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2c5282;
+        box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+    }
+    
+    .section-title {
+        color: #2c5282;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(26, 54, 93, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-user-plus me-2"></i>Add New Student
+            </h2>
+            <p class="text-muted">Enter student information to add them to the system.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="form-card p-4">
+                <form method="POST" action="{{ url_for('add_student') }}">
+                    <!-- Personal Information -->
+                    <h5 class="section-title"><i class="fas fa-user me-2"></i>Personal Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name *</label>
+                            <input type="text" class="form-control" name="first_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" name="last_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" value="18" min="15" max="30">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" name="gender">
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control" name="address">
+                        </div>
+                    </div>
+
+                    <!-- Academic Information -->
+                    <h5 class="section-title"><i class="fas fa-graduation-cap me-2"></i>Academic Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Attendance (%)</label>
+                            <input type="number" class="form-control" name="attendance" value="75" min="0" max="100">
+                            <small class="text-muted">Percentage of classes attended</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Study Hours per Week</label>
+                            <input type="number" class="form-control" name="study_hours" value="10" min="0" max="80">
+                            <small class="text-muted">Hours spent studying weekly</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Previous GPA</label>
+                            <input type="number" class="form-control" name="previous_gpa" value="2.5" min="0" max="4" step="0.1">
+                            <small class="text-muted">GPA from previous semester (0-4.0)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Assignments Completed (%)</label>
+                            <input type="number" class="form-control" name="assignments_completed" value="70" min="0" max="100">
+                            <small class="text-muted">Percentage of assignments submitted</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Health Issues (0-10)</label>
+                            <input type="number" class="form-control" name="health_issues" value="3" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = more health problems</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sleep Hours (daily)</label>
+                            <input type="number" class="form-control" name="sleep_hours" value="6" min="0" max="12" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Extracurriculars (hrs/wk)</label>
+                            <input type="number" class="form-control" name="extracurriculars" value="4" min="0" max="20" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mental Health Score (0-10)</label>
+                            <input type="number" class="form-control" name="mental_health_score" value="7" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = better mental health</small>
+                        </div>
+                    </div>
+
+                    <!-- Family Information -->
+                    <h5 class="section-title"><i class="fas fa-house-user me-2"></i>Family Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Parent/Guardian Income ($)</label>
+                            <input type="number" class="form-control" name="parent_income" value="35000" min="0">
+                            <small class="text-muted">Annual household income</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-save me-2"></i>Add Student & Get Prediction
+                        </button>
+                        <a href="{{ url_for('students') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-card p-4">
+                <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Information</h5>
+                <p class="text-muted">Enter the student's academic metrics to get AI-powered predictions.</p>
+                <hr>
+                <h6>Features Analyzed:</h6>
+                <ul class="text-muted">
+                    <li>Attendance rate</li>
+                    <li>Study hours</li>
+                    <li>Previous GPA</li>
+                    <li>Assignment completion</li>
+                    <li>Family income</li>
+                </ul>
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    The system will automatically generate a unique Student ID upon submission.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

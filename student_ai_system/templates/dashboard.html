@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+    
+    .icon-primary { background: rgba(44, 82, 130, 0.1); color: #2c5282; }
+    .icon-success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+    .icon-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .icon-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    
+    .stats-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #1a202c;
+    }
+    
+    .stats-label {
+        color: #64748b;
+        font-size: 14px;
+    }
+    
+    .quick-action-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .quick-action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        color: inherit;
+    }
+    
+    .quick-action-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+    
+    .recent-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .risk-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .risk-high { background: #fee2e2; color: #dc2626; }
+    .risk-medium { background: #fef3c7; color: #d97706; }
+    .risk-low { background: #dcfce7; color: #16a34a; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </h2>
+            <p class="text-muted">Welcome back, {{ user.username }}! Here's an overview of student performance.</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number">{{ stats.total_students }}</div>
+                        <div class="stats-label">Total Students</div>
+                    </div>
+                    <div class="stats-icon icon-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number">{{ stats.avg_gpa }}</div>
+                        <div class="stats-label">Average Predicted GPA</div>
+                    </div>
+                    <div class="stats-icon icon-success">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number">{{ stats.avg_attendance }}%</div>
+                        <div class="stats-label">Average Attendance</div>
+                    </div>
+                    <div class="stats-icon icon-warning">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stats-number text-danger">{{ stats.at_risk }}</div>
+                        <div class="stats-label">At-Risk Students</div>
+                    </div>
+                    <div class="stats-icon icon-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a href="{{ url_for('add_student') }}" class="quick-action-card">
+                <div class="quick-action-icon text-primary">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h6>Add Student</h6>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('predict') }}" class="quick-action-card">
+                <div class="quick-action-icon text-success">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h6>Make Prediction</h6>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('analytics') }}" class="quick-action-card">
+                <div class="quick-action-icon text-warning">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h6>View Analytics</h6>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('add_student') }}" class="quick-action-card">
+                <div class="quick-action-icon text-primary">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h6>Add Student</h6>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('add_all') }}" class="quick-action-card">
+                <div class="quick-action-icon text-info">
+                    <i class="fas fa-file-csv"></i>
+                </div>
+                <h6>Add All CSV</h6>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('predict') }}" class="quick-action-card">
+                <div class="quick-action-icon text-success">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h6>Make Prediction</h6>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('analytics') }}" class="quick-action-card">
+                <div class="quick-action-icon text-warning">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h6>View Analytics</h6>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{{ url_for('export_csv') }}" class="quick-action-card">
+                <div class="quick-action-icon text-secondary">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h6>Export Data</h6>
+            </a>
+        </div>
+    </div>
+
+    <!-- Risk Distribution & Recent Students -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <h5 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Risk Distribution</h5>
+                {% if stats.risk_distribution %}
+                    {% for risk in stats.risk_distribution %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="risk-badge risk-{{ risk.risk_level|lower }}">{{ risk.risk_level }}</span>
+                        <span class="fw-bold">{{ risk.count }} students</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="recent-table">
+                <div class="p-3 border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Recent Students</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Predicted GPA</th>
+                                <th>Risk Level</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recent_students %}
+                                {% for student in recent_students %}
+                                <tr>
+                                    <td>{{ student.student_id }}</td>
+                                    <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                    <td>{{ student.predicted_gpa }}</td>
+                                    <td>
+                                        <span class="risk-badge risk-{{ student.risk_level|lower }}">
+                                            {{ student.risk_level }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('edit_student', student_id=student.student_id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No students found. Add your first student!</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

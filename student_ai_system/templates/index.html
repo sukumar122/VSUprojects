@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}VSU College - Student AI Prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        color: white;
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') no-repeat center center;
+        background-size: 200px;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+    
+    .icon-blue { background: rgba(44, 82, 130, 0.1); color: #2c5282; }
+    .icon-green { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+    .icon-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .icon-purple { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+    
+    .stats-section {
+        background: #f8fafc;
+        padding: 60px 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 48px;
+        font-weight: bold;
+        color: #2c5282;
+    }
+    
+    .stat-label {
+        font-size: 18px;
+        color: #64748b;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+        color: white;
+        padding: 80px 0;
+    }
+    
+    .btn-vsu {
+        background: #c53030;
+        color: white;
+        padding: 15px 40px;
+        font-size: 18px;
+        border-radius: 30px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-vsu:hover {
+        background: #9b2c2c;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(197, 48, 48, 0.3);
+        color: white;
+    }
+    
+    .btn-outline-vsu {
+        border: 2px solid white;
+        color: white;
+        padding: 13px 38px;
+        font-size: 18px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-vsu:hover {
+        background: white;
+        color: #2c5282;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">VSU College AI System</h1>
+                <p class="lead mb-4">Advanced Machine Learning system for predicting student academic performance and identifying at-risk students for dropout prevention.</p>
+                <div class="d-flex gap-3">
+                    {% if not session.get('user_id') %}
+                        <a href="{{ url_for('register') }}" class="btn btn-vsu">Get Started</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-vsu">Login</a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-vsu">Go to Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-brain fa-10x" style="opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">Powerful AI Features</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>Dropout Prediction</h4>
+                    <p>Machine learning algorithms predict which students are at risk of dropping out with high accuracy.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>GPA Forecasting</h4>
+                    <p>Predict future GPA based on current academic performance and various influencing factors.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon icon-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4>Risk Assessment</h4>
+                    <p>Categorize students into risk levels (Low, Medium, High) for proactive intervention.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon icon-purple">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h4>Analytics Dashboard</h4>
+                    <p>Comprehensive analytics and visualizations to track student performance trends.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 stat-item">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Prediction Accuracy</div>
+            </div>
+            <div class="col-md-4 stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Data Points Analyzed</div>
+            </div>
+            <div class="col-md-4 stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Real-time Monitoring</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">01</div>
+                    <h4>Input Student Data</h4>
+                    <p>Enter academic metrics like attendance, study hours, previous GPA, and more.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">02</div>
+                    <h4>AI Analysis</h4>
+                    <p>Our ML models analyze the data using trained algorithms.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">03</div>
+                    <h4>Get Predictions</h4>
+                    <p>Receive dropout probability, predicted GPA, and risk assessment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="mb-4">Join VSU College in revolutionizing student success through AI-powered insights.</p>
+        {% if not session.get('user_id') %}
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Create Free Account</a>
+        {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-lg">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .step-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #c53030;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Student - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #2c5282;
+        box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
+    }
+    
+    .section-title {
+        color: #2c5282;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(26, 54, 93, 0.3);
+        color: white;
+    }
+    
+    .student-info {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-user-edit me-2"></i>Edit Student
+            </h2>
+            <p class="text-muted">Update student information and recalculate predictions.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="form-card p-4">
+                <div class="student-info mb-4">
+                    <strong>Student ID:</strong> {{ student.student_id }}
+                </div>
+                
+                <form method="POST" action="{{ url_for('edit_student', student_id=student.student_id) }}">
+                    <!-- Personal Information -->
+                    <h5 class="section-title"><i class="fas fa-user me-2"></i>Personal Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name *</label>
+                            <input type="text" class="form-control" name="first_name" value="{{ student.first_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" name="last_name" value="{{ student.last_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{ student.email or '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone" value="{{ student.phone or '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" value="{{ student.age }}" min="15" max="30">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" name="gender">
+                                <option value="">Select</option>
+                                <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control" name="address" value="{{ student.address or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Academic Information -->
+                    <h5 class="section-title"><i class="fas fa-graduation-cap me-2"></i>Academic Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Attendance (%)</label>
+                            <input type="number" class="form-control" name="attendance" value="{{ student.attendance }}" min="0" max="100">
+                            <small class="text-muted">Percentage of classes attended</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Study Hours per Week</label>
+                            <input type="number" class="form-control" name="study_hours" value="{{ student.study_hours }}" min="0" max="80">
+                            <small class="text-muted">Hours spent studying weekly</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Previous GPA</label>
+                            <input type="number" class="form-control" name="previous_gpa" value="{{ student.previous_gpa }}" min="0" max="4" step="0.1">
+                            <small class="text-muted">GPA from previous semester (0-4.0)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Assignments Completed (%)</label>
+                            <input type="number" class="form-control" name="assignments_completed" value="{{ student.assignments_completed }}" min="0" max="100">
+                            <small class="text-muted">Percentage of assignments submitted</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Health Issues (0-10)</label>
+                            <input type="number" class="form-control" name="health_issues" value="{{ student.health_issues or 3 }}" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = more health problems</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Sleep Hours (daily)</label>
+                            <input type="number" class="form-control" name="sleep_hours" value="{{ student.sleep_hours or 6 }}" min="0" max="12" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Extracurriculars (hrs/wk)</label>
+                            <input type="number" class="form-control" name="extracurriculars" value="{{ student.extracurriculars or 4 }}" min="0" max="20" step="0.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mental Health Score (0-10)</label>
+                            <input type="number" class="form-control" name="mental_health_score" value="{{ student.mental_health_score or 7 }}" min="0" max="10" step="0.1">
+                            <small class="text-muted">Higher = better mental health</small>
+                        </div>
+                    </div>
+
+                    <!-- Family Information -->
+                    <h5 class="section-title"><i class="fas fa-house-user me-2"></i>Family Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Parent/Guardian Income ($)</label>
+                            <input type="number" class="form-control" name="parent_income" value="{{ student.parent_income }}" min="0">
+                            <small class="text-muted">Annual household income</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-save me-2"></i>Update & Recalculate
+                        </button>
+                        <a href="{{ url_for('students') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-card p-4 mb-3">
+                <h5 class="mb-3"><i class="fas fa-chart-line me-2"></i>Current Prediction</h5>
+                <div class="student-info">
+                    <p><strong>Predicted GPA:</strong> {{ student.predicted_gpa }}</p>
+                    <p><strong>Dropout Probability:</strong> {{ (student.dropout_probability * 100)|round(1) }}%</p>
+                    <p><strong>Risk Level:</strong> 
+                        <span class="badge bg-{{ 'danger' if student.risk_level == 'High' else 'warning' if student.risk_level == 'Medium' else 'success' }}">
+                            {{ student.risk_level }}
+                        </span>
+                    </p>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Update the academic information and submit to get new predictions.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

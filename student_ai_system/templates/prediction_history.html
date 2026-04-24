@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - Student Academic Performance And Dropout prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #2c5282;
+        background: rgba(44, 82, 130, 0.1);
+    }
+    
+    .stats-number {
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .chart-container {
+        height: 350px;
+        position: relative;
+    }
+    
+    .history-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="fas fa-history me-2"></i>Prediction History
+            </h2>
+            <p class="text-muted">View past predictions and trends for all students.</p>
+        </div>
+    </div>
+
+<div class="row mb-4">
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number">{{ stats.total_predictions }}</div>
+                            <div class="text-muted small">Total Predictions</div>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number">{{ stats.avg_gpa }}</div>
+                            <div class="text-muted small">Avg Predicted GPA</div>
+                        </div>
+                        <div class="stats-icon" style="background: rgba(34,197,94,0.1); color: #22c55e;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="stats-number">{{ stats.avg_dropout_prob }}%</div>
+                            <div class="text-muted small">Avg Dropout Prob</div>
+                        </div>
+                        <div class="stats-icon" style="background: rgba(239,68,68,0.1); color: #ef4444;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     
+
+      
+
+        <div class="col-12">
+            <div class="card history-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>All Predictions</h5>
+                    <div>
+                        <input type="text" class="form-control d-inline-block w-auto" id="searchPredictions" placeholder="Search predictions...">
+                        <select class="form-select d-inline-block w-auto ms-2" id="riskFilter">
+                            <option value="">All Risk Levels</option>
+                            <option value="High">High Risk</option>
+                            <option value="Medium">Medium Risk</option>
+                            <option value="Low">Low Risk</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="predictionsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Student ID</th>
+                                    <th>Age</th>
+                                    <th>Attendance</th>
+                                    <th>Predicted GPA</th>
+                                    <th>Dropout Prob</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pred in predictions %}
+                                <tr data-student="{{ pred.student_id or '' }}">
+
+                                    <td>{{ pred['predicted_at'][:16] if pred['predicted_at'] else 'N/A' }}</td>
+                                    <td>{{ pred.student_id or 'New Prediction' }}</td>
+                                    <td>{{ pred.age }}</td>
+                                    <td>{{ pred.attendance }}%</td>
+                                    <td>{{ pred.predicted_gpa|round(2) }}</td>
+                                    <td>{{ (pred.dropout_probability * 100)|round(1) }}%</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if pred.risk_level == 'High' else 'warning' if pred.risk_level == 'Medium' else 'success' }}">
+                                            {{ pred.risk_level }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+        // Table filter (existing)
+        const searchInput = document.getElementById('searchPredictions');
+        const riskFilter = document.getElementById('riskFilter');
+        const table = document.getElementById('predictionsTable');
+    
+    function filterTable() {
+        const searchText = searchInput.value.toLowerCase();
+        const riskValue = riskFilter.value;
+        
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const studentIdCell = row.cells[1];
+            const riskCell = row.cells[6];
+            
+            const matchesSearch = studentIdCell.textContent.toLowerCase().includes(searchText);
+            const matchesRisk = !riskValue || riskCell.textContent.includes(riskValue);
+            
+            row.style.display = matchesSearch && matchesRisk ? '' : 'none';
+        });
+    }
+    
+    searchInput.addEventListener('input', filterTable);
+    riskFilter.addEventListener('change', filterTable);
+});
+        // Charts
+        const riskCtx = document.getElementById('riskChart')?.getContext('2d');
+        if (riskCtx) {
+            new Chart(riskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for risk in stats.risk_distribution %}'{{ risk.risk_level }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for risk in stats.risk_distribution %}{{ risk.count }},{% endfor %}],
+                        backgroundColor: ['#dcfce7', '#fef3c7', '#fee2e2']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        const gpaCtx = document.getElementById('gpaChart')?.getContext('2d');
+        if (gpaCtx && gpa_distribution) {
+            new Chart(gpaCtx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for item in gpa_distribution %}'{{ item.gpa_range }}',{% endfor %}],
+                    datasets: [{
+                        label: 'Predictions',
+                        data: [{% for item in gpa_distribution %}{{ item.count }},{% endfor %}],
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // Table filter (existing)
+        const searchInput = document.getElementById('searchPredictions');
+        const riskFilter = document.getElementById('riskFilter');
+        const table = document.getElementById('predictionsTable');
+        
+        function filterTable() {
+            const searchText = searchInput.value.toLowerCase();
+            const riskValue = riskFilter.value;
+            
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const studentIdCell = row.cells[1];
+                const riskCell = row.cells[6];
+                
+                const matchesSearch = studentIdCell.textContent.toLowerCase().includes(searchText);
+                const matchesRisk = !riskValue || riskCell.textContent.includes(riskValue);
+                
+                row.style.display = matchesSearch && matchesRisk ? '' : 'none';
+            });
+        }
+        
+        if (searchInput && riskFilter && table) {
+            searchInput.addEventListener('input', filterTable);
+            riskFilter.addEventListener('change', filterTable);
+        }
+    });
+</script>
+{% endblock %}
