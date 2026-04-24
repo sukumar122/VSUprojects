@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - Cyber Profiling{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .stat-icon-lg {
+        font-size: 2.5rem;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .table-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+    
+    .table-card .card-header {
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+    }
+    
+    .table-card .card-body {
+        padding: 0;
+    }
+    
+    .status-normal {
+        background: rgba(25, 135, 84, 0.2);
+        color: #198754;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .status-suspicious {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .search-box {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 10px 15px;
+        color: white;
+    }
+    
+    .search-box:focus {
+        outline: none;
+        border-color: #00d4ff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 212, 255, 0.25);
+    }
+    
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 10px;
+    }
+    
+    .filter-btn.active {
+        background: #00d4ff;
+        border-color: #00d4ff;
+        color: #000;
+    }
+    
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="admin-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="welcome-title">
+                        <i class="fas fa-user-shield me-2 text-warning"></i>
+                        Admin Dashboard
+                    </h1>
+                    <p class="welcome-subtitle">Monitor and manage all user activities</p>
+                </div>
+                <div class="text-end">
+                    <a href="/logout" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">{{ total_users }}</div>
+                </div>
+                <div class="stat-icon-lg text-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Logins</div>
+                    <div class="stat-value">{{ data|length }}</div>
+                </div>
+                <div class="stat-icon-lg text-info">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Suspicious Activities</div>
+                    <div class="stat-value text-danger">{{ suspicious_total }}</div>
+                </div>
+                <div class="stat-icon-lg text-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-users me-2"></i>Top Users by Activity</h5>
+            </div>
+            <div class="card-body">
+                {% if user_stats %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Logins</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in user_stats %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-2">{{ stat[0][0]|upper }}</div>
+                                    {{ stat[0] }}
+                                </div>
+                            </td>
+                            <td><span class="badge bg-primary">{{ stat[1] }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-white-50 text-center">No user statistics available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Security Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white"><i class="fas fa-check-circle me-2 text-success"></i>Normal Activities</span>
+                        <span class="text-white">{{ data|length - suspicious_total }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {% if data|length > 0 %}{{ ((data|length - suspicious_total) / data|length * 100)|round }}{% else %}100{% endif %}%">
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Suspicious Activities</span>
+                        <span class="text-white">{{ suspicious_total }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px; background: rgba(255,255,255,0.1);">
+                        <div class="progress-bar bg-danger" role="progressbar" 
+                             style="width: {% if data|length > 0 %}{{ (suspicious_total / data|length * 100)|round }}{% else %}0{% endif %}%">
+                        </div>
+                    </div>
+                </div>
+                {% if suspicious_total > 0 %}
+                <div class="alert alert-danger mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Alert:</strong> {{ suspicious_total }} suspicious activities detected. Immediate attention required.
+                </div>
+                {% else %}
+                <div class="alert alert-success mt-3">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>All Clear:</strong> No suspicious activities detected.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table-card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>All Login Activities
+                </h5>
+                <div class="d-flex gap-2 align-items-center">
+                    <input type="text" id="searchInput" class="search-box" placeholder="Search by username...">
+                    <div class="btn-group">
+                        <button class="filter-btn btn btn-sm active" data-filter="all">All</button>
+                        <button class="filter-btn btn btn-sm" data-filter="Normal">Normal</button>
+                        <button class="filter-btn btn btn-sm" data-filter="Suspicious">Suspicious</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if data %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="activityTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user me-1"></i> User</th>
+                                <th><i class="fas fa-clock me-1"></i> Login Time</th>
+                                <th><i class="fas fa-hourglass-start me-1"></i> Hour</th>
+                                <th><i class="fas fa-stopwatch me-1"></i> Duration (min)</th>
+                                <th><i class="fas fa-times-circle me-1"></i> Failed Attempts</th>
+                                <th><i class="fas fa-shield-alt me-1"></i> Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in data %}
+                            <tr data-status="{{ d[5] }}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-2">{{ d[0][0]|upper }}</div>
+                                        {{ d[0] }}
+                                    </div>
+                                </td>
+                                <td>{{ d[1] }}</td>
+                                <td>{{ d[2] }}:00</td>
+                                <td>{{ d[3] }}</td>
+                                <td>{{ d[4] }}</td>
+                                <td>
+                                    {% if d[5] == 'Suspicious' %}
+                                    <span class="status-suspicious">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> Suspicious
+                                    </span>
+                                    {% else %}
+                                    <span class="status-normal">
+                                        <i class="fas fa-check-circle me-1"></i> Normal
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No activities recorded</h4>
+                    <p>Login activities will appear here</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#activityTable tbody tr');
+        
+        rows.forEach(row => {
+            const username = row.cells[0].textContent.toLowerCase();
+            if (username.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Filter functionality
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            const rows = document.querySelectorAll('#activityTable tbody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.dataset.status === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

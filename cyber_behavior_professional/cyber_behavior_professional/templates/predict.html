@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}AI Prediction - Cyber Profiling{% endblock %}
+
+{% block extra_css %}
+<style>
+    .predict-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .predict-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    
+    .predict-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .predict-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+    
+    .predict-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 5px;
+    }
+    
+    .predict-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .input-group-text {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 8px;
+        padding: 12px 15px;
+    }
+    
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #00d4ff;
+        color: white;
+        box-shadow: 0 0 0 0.25rem rgba(0, 212, 255, 0.25);
+    }
+    
+    .form-select {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .form-select:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #00d4ff;
+        color: white;
+    }
+    
+    .form-select option {
+        background: #1a1a2e;
+        color: white;
+    }
+    
+    .btn-predict {
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        border: none;
+        padding: 14px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .btn-predict:hover {
+        background: linear-gradient(135deg, #00b8e6, #6a1f9f);
+        transform: translateY(-2px);
+    }
+    
+    .result-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 25px;
+        text-align: center;
+    }
+    
+    .result-normal {
+        border: 2px solid #198754;
+    }
+    
+    .result-suspicious {
+        border: 2px solid #dc3545;
+    }
+    
+    .result-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+    
+    .result-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .result-desc {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+    
+    .data-preview {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .data-preview h6 {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 10px;
+    }
+    
+    .data-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .data-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-box {
+        background: rgba(0, 212, 255, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .info-box h6 {
+        color: #00d4ff;
+        margin-bottom: 8px;
+    }
+    
+    .info-box p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="predict-container">
+    <div class="predict-card">
+        <div class="predict-header">
+            <div class="predict-icon">
+                <i class="fas fa-robot" style="background: linear-gradient(135deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            </div>
+            <h1 class="predict-title">AI Behavior Prediction</h1>
+            <p class="predict-subtitle">Enter behavioral data to analyze and detect suspicious activities</p>
+        </div>
+        
+        <div class="info-box">
+            <h6><i class="fas fa-info-circle me-2"></i>How it works</h6>
+            <p>Our AI model analyzes login hour, session duration, and failed attempts to predict if the behavior is normal or suspicious.</p>
+        </div>
+        
+        <form method="POST" id="predictForm">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-clock me-2"></i>Login Hour (0-23)
+                    </label>
+                    <select name="login_hour" class="form-select" required>
+                        {% for h in range(24) %}
+                        <option value="{{ h }}" {% if h == 9 %}selected{% endif %}>{{ h }}:00</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-stopwatch me-2"></i>Session Duration (minutes)
+                    </label>
+                    <input type="number" name="session_duration" class="form-control" 
+                           placeholder="e.g., 30" min="1" max="1440" required value="30">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-times-circle me-2"></i>Failed Login Attempts
+                </label>
+                <input type="number" name="failed_attempts" class="form-control" 
+                       placeholder="e.g., 0" min="0" max="10" required value="0">
+                <div class="form-text text-white-50">Number of failed login attempts (0 = success)</div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-predict">
+                <i class="fas fa-brain me-2"></i>Analyze Behavior
+            </button>
+        </form>
+        
+        {% if result %}
+        <div class="result-card {% if result == 'Normal' %}result-normal{% else %}result-suspicious{% endif %}">
+            {% if result == 'Normal' %}
+            <div class="result-icon" style="color: #198754;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="result-title" style="color: #198754;">Normal Behavior</h3>
+            <p class="result-desc">
+                The analyzed behavior pattern appears to be normal. This login session shows typical characteristics 
+                that match normal user behavior patterns in our database.
+            </p>
+            {% else %}
+            <div class="result-icon" style="color: #dc3545;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="result-title" style="color: #dc3545;">Suspicious Behavior Detected!</h3>
+            <p class="result-desc">
+                The analyzed behavior pattern shows unusual characteristics that may indicate a security threat. 
+                This could be unauthorized access attempt or compromised account. Please investigate further.
+            </p>
+            {% endif %}
+            
+            <div class="data-preview">
+                <h6><i class="fas fa-list me-2"></i>Input Data Analysis</h6>
+                <div class="data-item">
+                    <span>Login Hour</span>
+                    <span>{{ login_hour }}:00</span>
+                </div>
+                <div class="data-item">
+                    <span>Session Duration</span>
+                    <span>{{ session_duration }} minutes</span>
+                </div>
+                <div class="data-item">
+                    <span>Failed Attempts</span>
+                    <span>{{ failed_attempts }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="text-center mt-4">
+            <a href="/" class="text-white-50 text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

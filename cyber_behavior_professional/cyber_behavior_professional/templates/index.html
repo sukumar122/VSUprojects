@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}AI Cyber Behaviour Profiling System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf, #00d4ff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shimmer 3s linear infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 40px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.8;
+    }
+    
+    .feature-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 35px 25px;
+        transition: all 0.4s ease;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-15px);
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .feature-icon {
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .feature-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 15px;
+    }
+    
+    .feature-desc {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    .btn-hero {
+        padding: 16px 45px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 30px;
+        margin: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-hero:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .btn-success-custom {
+        background: linear-gradient(135deg, #198754, #20c997);
+        border: none;
+    }
+    
+    .btn-outline-light-custom {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: white;
+    }
+    
+    .btn-outline-light-custom:hover {
+        background: white;
+        color: #1a1a2e;
+        border-color: white;
+    }
+    
+    .btn-warning-custom {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        border: none;
+        color: #000;
+    }
+    
+    .floating {
+        animation: floating 4s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        25% { transform: translateY(-15px) rotate(2deg); }
+        50% { transform: translateY(0) rotate(0deg); }
+        75% { transform: translateY(15px) rotate(-2deg); }
+    }
+    
+    .hero-graphic {
+        width: 220px;
+        height: 220px;
+        margin: 0 auto 40px;
+        position: relative;
+    }
+    
+    .hero-graphic::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: -1;
+    }
+    
+    .pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 50%;
+        animation: pulse 2s ease-out infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    }
+    
+    .tech-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 8px 20px;
+        margin: 5px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .stats-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 40px;
+        margin: 50px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="hero-graphic floating">
+            <div class="pulse-ring"></div>
+            <i class="fas fa-shield-halved" style="font-size: 8rem; background: linear-gradient(135deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        </div>
+        <h1 class="hero-title">AI Cyber Behaviour Profiling</h1>
+        <p class="hero-subtitle">
+            Advanced machine learning system for detecting and analyzing user behavior patterns in real-time. 
+            Identify threats before they happen with our intelligent profiling technology powered by cutting-edge AI.
+        </p>
+        
+        <div class="mb-4">
+            <span class="tech-badge"><i class="fas fa-brain me-2"></i>Machine Learning</span>
+            <span class="tech-badge"><i class="fas fa-robot me-2"></i>Artificial Intelligence</span>
+            <span class="tech-badge"><i class="fas fa-chart-line me-2"></i>Behavioral Analytics</span>
+        </div>
+        
+        <div class="mt-4">
+            <a href="/login" class="btn btn-success btn-hero">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+            <a href="/register" class="btn btn-outline-light btn-hero">
+                <i class="fas fa-user-plus me-2"></i>Register
+            </a>
+            <a href="/predict" class="btn btn-info btn-hero" style="background: linear-gradient(135deg, #0dcaf0, #7b2cbf); border: none;">
+                <i class="fas fa-robot me-2"></i>AI Prediction
+            </a>
+            <a href="/admin" class="btn btn-warning btn-hero">
+                <i class="fas fa-user-shield me-2"></i>Admin
+            </a>
+        </div>
+        
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value">99.9%</div>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="stat-value">Real-time</div>
+                        <div class="stat-label">Detection</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Protection</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">AI-Powered Analysis</h3>
+                    <p class="feature-desc">
+                        Advanced machine learning algorithms analyze user behavior patterns in real-time, 
+                        detecting anomalies and potential security threats automatically.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="feature-title">Threat Detection</h3>
+                    <p class="feature-desc">
+                        Identify suspicious activities and potential security threats before they cause damage. 
+                        Our system learns from every interaction to improve accuracy.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="feature-title">Behavioral Insights</h3>
+                    <p class="feature-desc">
+                        Get detailed insights into user behavior with comprehensive analytics dashboard. 
+                        Visualize patterns and make data-driven security decisions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

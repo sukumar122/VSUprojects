@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Cyber Profiling{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .register-bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.15;
+        z-index: -1;
+    }
+    
+    .register-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .register-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(123, 44, 191, 0.3), rgba(0, 212, 255, 0.3));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .register-icon img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+    }
+    
+    .register-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 5px;
+    }
+    
+    .register-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .input-group-text {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .btn-register {
+        background: linear-gradient(135deg, #7b2cbf, #00d4ff);
+        border: none;
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .btn-register:hover {
+        background: linear-gradient(135deg, #6a1f9f, #00b8e6);
+        transform: translateY(-2px);
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .login-link a {
+        color: #00d4ff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+    
+    .form-check-label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .password-strength {
+        height: 5px;
+        border-radius: 3px;
+        margin-top: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .password-requirements {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 10px;
+    }
+    
+    .password-requirements li {
+        margin-bottom: 3px;
+    }
+    
+    .password-requirements .valid {
+        color: #198754;
+    }
+    
+    .password-requirements .invalid {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <img src="https://images.unsplash.com/photo-1633265486064-086b219458ec?w=1920&q=80" alt="Cybersecurity Background" class="register-bg-image">
+    <div class="register-card">
+        <div class="register-header">
+            <div class="register-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="User Registration">
+            </div>
+            <h1 class="register-title">Create Account</h1>
+            <p class="register-subtitle">Join the cyber profiling community</p>
+        </div>
+        
+        <form method="POST" id="registerForm">
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-user me-2"></i>Username
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Choose a username" required minlength="3">
+                </div>
+                <div class="form-text text-white-50">At least 3 characters</div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-envelope me-2"></i>Email Address
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-lock me-2"></i>Password
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Create a password" required minlength="6">
+                </div>
+                <div class="password-strength" id="passwordStrength"></div>
+                <ul class="password-requirements">
+                    <li id="lengthReq"><i class="fas fa-circle me-1"></i> At least 6 characters</li>
+                </ul>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-lock me-2"></i>Confirm Password
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="confirm_password" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
+                </div>
+                <div id="passwordMatch" class="form-text"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-register">
+                <i class="fas fa-user-plus me-2"></i>Register
+            </button>
+        </form>
+        
+        <div class="login-link">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="/" class="text-white-50 text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const passwordStrength = document.getElementById('passwordStrength');
+    const passwordMatch = document.getElementById('passwordMatch');
+    
+    password.addEventListener('input', function() {
+        const val = this.value;
+        let strength = 0;
+        
+        if (val.length >= 6) strength++;
+        if (val.length >= 10) strength++;
+        if (/[A-Z]/.test(val)) strength++;
+        if (/[0-9]/.test(val)) strength++;
+        if (/[^A-Za-z0-9]/.test(val)) strength++;
+        
+        if (strength === 0) {
+            passwordStrength.style.background = 'transparent';
+        } else if (strength <= 2) {
+            passwordStrength.style.background = '#dc3545';
+        } else if (strength <= 3) {
+            passwordStrength.style.background = '#ffc107';
+        } else {
+            passwordStrength.style.background = '#198754';
+        }
+    });
+    
+    confirmPassword.addEventListener('input', function() {
+        if (this.value === password.value && this.value.length > 0) {
+            passwordMatch.innerHTML = '<i class="fas fa-check-circle text-success"></i> Passwords match';
+            passwordMatch.className = 'form-text text-success';
+        } else if (this.value.length > 0) {
+            passwordMatch.innerHTML = '<i class="fas fa-times-circle text-danger"></i> Passwords do not match';
+            passwordMatch.className = 'form-text text-danger';
+        } else {
+            passwordMatch.innerHTML = '';
+        }
+    });
+</script>
+{% endblock %}

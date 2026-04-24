@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cyber Profiling{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome-header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .welcome-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .welcome-title {
+        font-size: 1.8rem;
+        color: white;
+        margin-bottom: 5px;
+    }
+    
+    .welcome-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+    }
+    
+    .stat-icon-lg {
+        font-size: 2.5rem;
+        width: 60px;
+        height: 60px;
+        display align-items: center: flex;
+       ;
+        justify-content: center;
+        border-radius: 15px;
+    }
+    
+    .stat-icon-lg img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+    
+    .table-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+    
+    .table-card .card-header {
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+    }
+    
+    .table-card .card-body {
+        padding: 0;
+    }
+    
+    .status-normal {
+        background: rgba(25, 135, 84, 0.2);
+        color: #198754;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .status-suspicious {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .dashboard-hero-img {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 150px;
+        opacity: 0.3;
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-hero-img {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="welcome-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/2920/2920323.png" alt="Dashboard" class="dashboard-hero-img">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="welcome-title">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>
+                        Welcome back, {{ user }}!
+                    </h1>
+                    <p class="welcome-subtitle">Here's your cyber behavior activity overview</p>
+                </div>
+                <div class="text-end">
+                    <a href="/profile" class="btn btn-outline-light">
+                        <i class="fas fa-user-cog me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Total Logins</div>
+                    <div class="stat-value">{{ total_logins }}</div>
+                </div>
+                <div class="stat-icon-lg" style="background: rgba(0, 212, 255, 0.2);">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4926/4926055.png" alt="Login">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Suspicious Activities</div>
+                    <div class="stat-value {% if suspicious_count > 0 %}text-warning{% endif %}">{{ suspicious_count }}</div>
+                </div>
+                <div class="stat-icon-lg" style="background: rgba(255, 193, 7, 0.2);">
+                    <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="Warning">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label">Security Status</div>
+                    <div class="stat-value {% if suspicious_count == 0 %}text-success{% else %}text-warning{% endif %}">
+                        {% if suspicious_count == 0 %}Secure{% else %}Warning{% endif %}
+                    </div>
+                </div>
+                <div class="stat-icon-lg" style="background: rgba(25, 135, 84, 0.2);">
+                    <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="Security">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="table-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Login History
+                </h5>
+                <span class="badge bg-primary">{{ data|length }} records</span>
+            </div>
+            <div class="card-body">
+                {% if data %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-clock me-1"></i> Login Time</th>
+                                <th><i class="fas fa-hourglass-start me-1"></i> Hour</th>
+                                <th><i class="fas fa-stopwatch me-1"></i> Duration (min)</th>
+                                <th><i class="fas fa-times-circle me-1"></i> Failed Attempts</th>
+                                <th><i class="fas fa-shield-alt me-1"></i> Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in data %}
+                            <tr>
+                                <td>{{ d[0] }}</td>
+                                <td>{{ d[1] }}:00</td>
+                                <td>{{ d[2] }}</td>
+                                <td>{{ d[3] }}</td>
+                                <td>
+                                    {% if d[4] == 'Suspicious' %}
+                                    <span class="status-suspicious">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> Suspicious
+                                    </span>
+                                    {% else %}
+                                    <span class="status-normal">
+                                        <i class="fas fa-check-circle me-1"></i> Normal
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No login history yet</h4>
+                    <p>Your login activities will appear here</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Activity Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Your behavior profile is being analyzed by our AI system.
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">
+                        <span><i class="fas fa-check me-2 text-success"></i>Normal Activities</span>
+                        <span class="badge bg-success rounded-pill">{{ total_logins - suspicious_count }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">
+                        <span><i class="fas fa-exclamation me-2 text-warning"></i>Suspicious Activities</span>
+                        <span class="badge bg-warning rounded-pill">{{ suspicious_count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Security Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-white"><i class="fas fa-shield-alt me-2 text-success"></i>Keep Your Account Secure</h6>
+                    <ul class="text-white-50 small">
+                        <li>Use a strong, unique password</li>
+                        <li>Enable two-factor authentication</li>
+                        <li>Monitor your login activity regularly</li>
+                        <li>Report any suspicious activities</li>
+                    </ul>
+                </div>
+                {% if suspicious_count > 0 %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Attention:</strong> Some of your activities were flagged as suspicious. 
+                    Please review your login history.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
